@@ -269,6 +269,73 @@ class TitaniaElement {
 	}
 }
 
+class Series {
+	constructor (items=null) {
+		this[0] = (items ?? []);
+		this.add = {
+			first: function (subject) {
+				let pair = (subject instanceof Pair) ? subject : (typeof subject === "object" && !(subject instanceof Pair)) ? new Pair(subject[0], subject[1]) : null; 
+
+				if (pair != null) {
+					this[0].push(this[0][this[0].length]);
+						
+					for (var j = 0; j < this[0].length; j++) {
+						let item = (j == 0) ? subject : this[0][j + 1];
+						this[0][j] = item;
+					}					
+				}
+
+				return pair;
+			},
+			next: function (subject) {
+				switch (true) {
+					case (subject instanceof Pair):
+						this[0].push(subject);
+						return subject;
+
+					case (typeof subject === "object" && !(subject instanceof Pair)):
+						var pr = new Pair(subject[0], subject[1]);
+						this[0].push(pr);
+						return subject;
+
+					default:
+						throw new TitaniaException(); //to-do
+				}
+			}
+		};
+		this.find = function (pair) {
+			for (var x = 0; x < this[0].length; x++) {
+				let p = this[0][x];
+
+				if (p.key === pair.key && p.val === pair.val) {
+					return true;
+				} else if (x == this[0].length) {
+					return false;
+				}
+			}
+		};
+		this.drop = function (pair) {
+			for (var x = 0; x < this[0].length; x++) {
+				let p = this[0][x];
+
+				if (p.key === pair.key && p.val === pair.val) {
+					this[0].splice(p, 1);
+					return true;
+				} else if (x == this[0].length) {
+					return false;
+				}
+			}
+		}
+	}
+}
+
+class Pair extends Series {
+	constructor (key, val) {
+		this.key = key;
+		this.val = val;
+	}
+}
+
 class TitaniaException {
 	constructor (code, body, culprit) {
 		this.code = code;
