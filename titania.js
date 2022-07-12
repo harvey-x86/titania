@@ -273,6 +273,7 @@ class Series {
 	constructor (items=null) {
 		this[0] = (items ?? []);
 		this.add = {
+			list: this[0],
 			first: function (subject) {
 				let pair = (subject instanceof Pair) ? subject : (typeof subject === "object" && !(subject instanceof Pair)) ? new Pair(subject[0], subject[1]) : null; 
 
@@ -287,16 +288,16 @@ class Series {
 
 				return pair;
 			},
-			next: function (subject) {
+			next: function (a, b=null) {
 				switch (true) {
-					case (subject instanceof Pair):
-						this[0].push(subject);
-						return subject;
+					case (a instanceof Pair):
+						(this.list).push(a);
+						return a;
 
-					case (typeof subject === "object" && !(subject instanceof Pair)):
-						var pr = new Pair(subject[0], subject[1]);
-						this[0].push(pr);
-						return subject;
+					case ((typeof a != "object") && (b != null)):
+						var pr = new Pair(a, b);
+						(this.list).push(pr);
+						return a;
 
 					default:
 						throw new TitaniaException(); //to-do
@@ -329,7 +330,7 @@ class Series {
 	}
 }
 
-class Pair extends Series {
+class Pair /*extends Series*/ {
 	constructor (key, val) {
 		this.key = key;
 		this.val = val;
